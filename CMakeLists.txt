@@ -2,11 +2,21 @@
 # Check for a valid version of CMake.
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
+# ###############################################
+# Include the main cmake file
+get_filename_component(CYC_ROOT_DIR "." ABSOLUTE)
+message("CYC_ROOT_DIR: ${CYC_ROOT_DIR}")
+include("${CYC_ROOT_DIR}/CMake/cyclops.cmake")
+
+# ###############################################
+# Add definitions
 ADD_DEFINITIONS("-std=c++11")
 
 # ###############################################
-# Start the project.
+# Start & Setup the project.
 PROJECT( TheCyclops )
+
+cyc_setup()
 
 # ###############################################
 # Allow unit tests to be disabled via command

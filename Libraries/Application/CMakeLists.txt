@@ -14,9 +14,14 @@ SET (TARGET_NAME Application)
 #SET ( SOURCE_FILES
 #    Source/CyclopsApplication.cpp
 #    )
+#FILE ( GLOB_RECURSE
+#       SOURCE_FILES
+#       Source/**
+#      )
 FILE ( GLOB_RECURSE
        SOURCE_FILES
-       Source/**
+       Source/SDLApplication.cpp
+       Source/CyclopsApplication.cpp
       )
 
 ########################################################################

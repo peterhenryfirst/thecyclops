@@ -9,6 +9,8 @@
 import os
 import stat
 import fnmatch
+import SimpleHTTPServer
+import SocketServer
 from shutil import rmtree, copy2
 from subprocess import check_call
 
@@ -55,6 +57,7 @@ if __name__ == "__main__":
      os.path.expandvars("-DCMAKE_TOOLCHAIN_FILE=$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake"),
      #"-DCMAKE_BUILD_TYPE=Release",
      "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+     "-DCYC_EMSCRIPTEN=1",
      "-DCMAKE_MAKE_PROGRAM=make",
      "-G", "Unix Makefiles",
      ".."
@@ -64,9 +67,23 @@ if __name__ == "__main__":
     check_call(["make"])
     
     # we are in Build directory
-    dest_dir = resolve_path("../../../tklweb-cp/public/kull-ems")
+    #dest_dir = resolve_path("../../../tklweb-cp/public/kull-ems")
+    dest_dir = resolve_path("../Public")
     rmtree_silent(dest_dir)
     makedirs_silent(dest_dir)
     
     # we are in Build directory
-    copyfiles(resolve_path("./Applications/Main"), resolve_path("../../../tklweb-cp/public/kull-ems"), "Main*")
+    copyfiles(resolve_path("./Applications/Main"), resolve_path("../Public"), "Main*")
+
+    # run http server in current dir
+
+    port = 8000
+
+    os.chdir(dest_dir)
+    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    httpd = SocketServer.TCPServer(("", port), Handler)
+
+    print "serving at port", port
+    httpd.serve_forever()
+
+    #open browser

@@ -28,8 +28,9 @@
 *.out
 *.app
 
-#Build directory
+#Build & Public directory
 Build/
+Public/
 
 #IDE settings
 .vscode/

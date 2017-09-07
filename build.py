@@ -13,6 +13,7 @@ import SimpleHTTPServer
 import SocketServer
 from shutil import rmtree, copy2
 from subprocess import check_call
+from ruamel.yaml import YAML
 
 def resolve_path(rel_path):
     return os.path.abspath(os.path.join(os.path.dirname(__file__), rel_path)) 
@@ -46,44 +47,70 @@ def copyfiles(srcdir, dstdir, filepattern):
 
 if __name__ == "__main__":
 
+    yaml = YAML()
+
+    with open("config.yml", 'r') as ymlfile:
+        cfg = yaml.load(ymlfile)
+
     build_dir = resolve_path("./Build")
     rmtree_silent(build_dir)
     makedirs_silent(build_dir)
     os.chdir(build_dir)
 
-    check_call([
-     "cmake",
-     #os.path.expandvars("-DCMAKE_TOOLCHAIN_FILE=$EMSCRIPTEN/cmake/Platform/Emscripten.cmake"),
-     os.path.expandvars("-DCMAKE_TOOLCHAIN_FILE=$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake"),
-     #"-DCMAKE_BUILD_TYPE=Release",
-     "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-     "-DCYC_EMSCRIPTEN=1",
-     "-DCMAKE_MAKE_PROGRAM=make",
-     "-G", "Unix Makefiles",
-     ".."
-    ])
+    cmake_array_call = [
+        "cmake",
+        "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+        "-DCMAKE_MAKE_PROGRAM=make",
+        "-G", "Unix Makefiles",
+        ".."
+    ]
 
-    #check_call(["mingw32-make"])
+    if 'emscripten' in cfg is True:
+        cmake_array_call = [
+            "cmake",
+            os.path.expandvars(
+                "-DCMAKE_TOOLCHAIN_FILE=$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake"
+            ),
+            "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+            "-DCYC_EMSCRIPTEN=1",
+            "-DCMAKE_MAKE_PROGRAM=make",
+            "-G", "Unix Makefiles",
+            ".."
+        ]
+
+    check_call(cmake_array_call)
+
+    #check_call(["mingw32-make"])		
+    #	return true;
     check_call(["make"])
     
     # we are in Build directory
     #dest_dir = resolve_path("../../../tklweb-cp/public/kull-ems")
-    dest_dir = resolve_path("../Public")
-    rmtree_silent(dest_dir)
-    makedirs_silent(dest_dir)
+    
     
     # we are in Build directory
-    copyfiles(resolve_path("./Applications/Main"), resolve_path("../Public"), "Main*")
+    if 'emscripten' in cfg is True:
+        dest_dir = resolve_path("../Public")
+        rmtree_silent(dest_dir)
+        makedirs_silent(dest_dir)
 
-    # run http server in current dir
+        copyfiles(resolve_path("./Applications/Main"), resolve_path("../Public"), "Main*")
 
-    port = 8000
+        # run http server in current dir
 
-    os.chdir(dest_dir)
-    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-    httpd = SocketServer.TCPServer(("", port), Handler)
+        port = 8000
 
-    print "serving at port", port
-    httpd.serve_forever()
+        os.chdir(dest_dir)
+        Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+        httpd = SocketServer.TCPServer(("", port), Handler)
 
-    #open browser
+        print "serving at port", port
+        httpd.serve_forever()
+
+        #open browser
+    else:
+        dest_dir = resolve_path("../Bin")
+        rmtree_silent(dest_dir)
+        makedirs_silent(dest_dir)
+
+        copyfiles(resolve_path("./Applications/Main"), resolve_path("../Bin"), "Main*")

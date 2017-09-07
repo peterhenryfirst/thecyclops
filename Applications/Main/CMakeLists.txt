@@ -1,6 +1,6 @@
 PROJECT (MAIN)
 
-ADD_DEFINITIONS("-s USE_SDL=2")
+#ADD_DEFINITIONS("-s USE_SDL=2")
 
 FILE ( GLOB_RECURSE
        INCLUDE_FILES
@@ -25,6 +25,7 @@ cyc_set_default_properties(Main)
 #Add project libraries
 #TARGET_LINK_LIBRARIES (Main Math_static)
 TARGET_LINK_LIBRARIES (Main Application_static)
+TARGET_LINK_LIBRARIES (Main ScriptManager_static)
 
 INSTALL (TARGETS Main
         RUNTIME DESTINATION bin COMPONENT Runtime

@@ -35,6 +35,7 @@
 
 
 #include "Application/CyclopsApplication.h"
+#include "ScriptManager/Server.h"
 
 #if (defined _DEBUG) || !(defined _WIN32)
 int main(int __argc, char **__argv) {
@@ -71,6 +72,19 @@ int main(int __argc, char **__argv) {
 
 		miApp.release();
 		/**/
+
+		if(ScriptManager::CServer::getSingletonPtr()->init()){
+			ScriptManager::CServer::getSingletonPtr()->test();
+		} 
+		/*
+		ScriptManager::CServer duktapeTest;
+
+		if(duktapeTest.init()) {
+			printf( "Test duktape!\n" );
+			duktapeTest.test();
+		}
+		duktapeTest.release();
+		*/
 	}
 
 	return 0;

@@ -62,6 +62,7 @@ endmacro()
 
 macro(cyc_set_default_properties target)
   if (CYC_EMSCRIPTEN)
+    message("Set Emscripten properties")
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")
     SET_TARGET_PROPERTIES(${target} PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s ALLOW_MEMORY_GROWTH=1 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"bmp\", \"png\"]' --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/Assets@/")
   endif()

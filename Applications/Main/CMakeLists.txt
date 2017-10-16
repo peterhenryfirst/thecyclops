@@ -24,8 +24,8 @@ cyc_set_default_properties(Main)
 
 #Add project libraries
 #TARGET_LINK_LIBRARIES (Main Math_static)
-TARGET_LINK_LIBRARIES (Main Application_static)
 TARGET_LINK_LIBRARIES (Main ScriptManager_static)
+TARGET_LINK_LIBRARIES (Main Application_static)
 
 INSTALL (TARGETS Main
         RUNTIME DESTINATION bin COMPONENT Runtime
